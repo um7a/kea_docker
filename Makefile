@@ -1,6 +1,9 @@
-IMAGE_NAME := local/kea
-TAG := 2.6.1
+IMAGE_NAME := kea
+KEA_VERSION := 2.6
+IMAGE_VERSION := 1
+TAG := ${KEA_VERSION}.${IMAGE_VERSION}
 CONTAINER_NAME := $(shell echo test_run_${IMAGE_NAME}_${TAG} | sed -e s/\\//_/g)
+IMAGE_FILE_NAME := ${IMAGE_NAME}_${TAG}.tar
 
 ContainerExists = "$(shell docker ps | grep ${CONTAINER_NAME})"
 
@@ -9,15 +12,22 @@ help:
 	@echo ""
 	@echo "  TARGETS"
 	@echo "    build  ... Build docker image ${IMAGE_NAME}"
+	@echo "    save   ... Save docker image ${IMAGE_NAME} to file"
 	@echo "    clean  ... Clean docker image ${IMAGE_NAME}"
 	@echo "    run    ... Run docker container using image ${IMAGE_NAME}"
 	@echo "    attach ... Attach on docker container using image ${IMAGE_NAME}"
 	@echo "    stop   ... Stop docker container which was created by run target"
+	@echo "    logs   ... Show logs of docker container"
 	@echo ""
 
 .PHONY: build
 build: Dockerfile
 	docker build --rm -t ${IMAGE_NAME}:${TAG} .
+
+.PHONY: save
+save:
+	docker save -o ${IMAGE_FILE_NAME} ${IMAGE_NAME}:${TAG}
+
 
 .PHONY: clean
 clean: stop
@@ -51,3 +61,9 @@ ifneq (${ContainerExists}, "")
 else
 	@echo "Container does not exist."
 endif
+
+.PHONY: logs
+logs:
+	docker logs \
+	-f \
+	${CONTAINER_NAME}

@@ -8,10 +8,13 @@ Docker image for Kea.
 $ make
 
   TARGETS
-    build ... Build docker image local/kea
-    clean ... Clean docker image local/kea
-    run   ... Run docker container using image local/kea
-    stop  ... Stop docker container which was created by run target
+    build  ... Build docker image kea
+    save   ... Save docker image kea to file
+    clean  ... Clean docker image kea
+    run    ... Run docker container using image kea
+    attach ... Attach on docker container using image kea
+    stop   ... Stop docker container which was created by run target
+    logs   ... Show logs of docker container
 
 ```
 
