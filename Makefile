@@ -1,9 +1,9 @@
-IMAGE_NAME := kea
+IMAGE_NAME := um7a/kea
 KEA_VERSION := 2.6
 IMAGE_VERSION := 1
 TAG := ${KEA_VERSION}.${IMAGE_VERSION}
 CONTAINER_NAME := $(shell echo test_run_${IMAGE_NAME}_${TAG} | sed -e s/\\//_/g)
-IMAGE_FILE_NAME := ${IMAGE_NAME}_${TAG}.tar
+IMAGE_FILE_NAME := $(shell echo ${IMAGE_NAME}_${TAG}.tar | sed -e s/\\//_/g)
 
 ContainerExists = "$(shell docker ps | grep ${CONTAINER_NAME})"
 
@@ -27,11 +27,12 @@ build: Dockerfile
 .PHONY: save
 save:
 	docker save -o ${IMAGE_FILE_NAME} ${IMAGE_NAME}:${TAG}
-
+	gzip ${IMAGE_FILE_NAME}
 
 .PHONY: clean
 clean: stop
 	docker rmi ${IMAGE_NAME}:${TAG}
+	rm -f ${IMAGE_FILE_NAME}.gz
 
 .PHONY: run
 run: stop
